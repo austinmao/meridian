@@ -44,6 +44,15 @@
         "prompt_keywords": ["ucpl", "ultra compact", "compress prompt", "token efficient"],
         "tool_patterns": []
       }
+    },
+    {
+      "name": "spec-kit",
+      "description": "Use spec-kit for spec-driven development integrated with Meridian tasks",
+      "triggers": {
+        "file_patterns": ["docs/artifacts/speckit-*.md"],
+        "prompt_keywords": ["spec-kit", "speckit", "specification", "spec-driven", "constitution", "specify", "plan feature", "requirements"],
+        "tool_patterns": []
+      }
     }
   ]
 }
