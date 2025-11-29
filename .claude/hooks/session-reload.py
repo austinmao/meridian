@@ -3,7 +3,84 @@
 import os
 import sys
 import json
+import subprocess
 from pathlib import Path
+from typing import Optional
+
+
+def get_git_branch() -> Optional[str]:
+    """Get current git branch name."""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if result.returncode == 0:
+            return result.stdout.strip()
+    except Exception:
+        pass
+    return None
+
+
+def get_git_uncommitted_count() -> Optional[int]:
+    """Get count of uncommitted changes."""
+    try:
+        result = subprocess.run(
+            ["git", "status", "--porcelain"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if result.returncode == 0:
+            lines = [l for l in result.stdout.strip().split("\n") if l]
+            return len(lines)
+    except Exception:
+        pass
+    return None
+
+
+def get_github_issues(limit: int = 5) -> Optional[list]:
+    """Get open GitHub issues if gh CLI is available and authenticated."""
+    try:
+        result = subprocess.run(
+            ["gh", "issue", "list", "--limit", str(limit), "--json", "number,title"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        if result.returncode == 0:
+            return json.loads(result.stdout)
+    except Exception:
+        pass
+    return None
+
+
+def format_git_context() -> str:
+    """Format git context for display."""
+    lines = []
+
+    branch = get_git_branch()
+    if branch:
+        lines.append(f"- Branch: `{branch}`")
+
+    uncommitted = get_git_uncommitted_count()
+    if uncommitted is not None:
+        if uncommitted == 0:
+            lines.append("- Working tree: clean")
+        else:
+            lines.append(f"- Uncommitted changes: {uncommitted} file(s)")
+
+    issues = get_github_issues()
+    if issues:
+        lines.append(f"- Open GitHub issues: {len(issues)}")
+        for issue in issues[:3]:  # Show top 3
+            lines.append(f"  - #{issue['number']}: {issue['title'][:50]}")
+
+    if lines:
+        return "\n".join(lines)
+    return "- (git context unavailable)"
 
 
 def read_file(path: Path) -> str:
@@ -72,6 +149,10 @@ def main() -> int:
 
     # Inject the CODE_GUIDE_FILES block
     reload_context = reload_context.replace("{{CODE_GUIDE_FILES}}", code_guide_files)
+
+    # Inject git context
+    git_context = format_git_context()
+    reload_context = reload_context.replace("{{GIT_CONTEXT}}", git_context)
 
     additional_context = (
         f"<reload_context_system_message>{reload_context}"

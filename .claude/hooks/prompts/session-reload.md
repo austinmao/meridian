@@ -6,6 +6,9 @@ This conversation was recently compacted. There are important files and document
 - `$CLAUDE_PROJECT_DIR/.meridian/relevant-docs.md`
 - `$CLAUDE_PROJECT_DIR/.meridian/task-backlog.yaml`
 
+**Git Status:**
+{{GIT_CONTEXT}}
+
 Check `$CLAUDE_PROJECT_DIR/.meridian/task-backlog.yaml` for any uncompleted tasks. For each uncompleted task, go to the corresponding folder at `$CLAUDE_PROJECT_DIR/.meridian/tasks/TASK-###/` and read **all** files within that folder.
 
 **Synchronize your current work before proceeding**  
