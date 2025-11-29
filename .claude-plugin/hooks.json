@@ -1,0 +1,117 @@
+[
+  {
+    "event": "SessionStart",
+    "matcher": "compact|resume",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "\"${CLAUDE_PLUGIN_ROOT}\"/.claude/hooks/session-reload.py"
+      }
+    ]
+  },
+  {
+    "event": "SessionStart",
+    "matcher": "startup|clear",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "\"${CLAUDE_PLUGIN_ROOT}\"/.claude/hooks/claude-init.py"
+      }
+    ]
+  },
+  {
+    "event": "UserPromptSubmit",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "\"${CLAUDE_PLUGIN_ROOT}\"/.claude/hooks/skill-activator.py --log-prompts --store-session"
+      }
+    ]
+  },
+  {
+    "event": "Notification",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "\"${CLAUDE_PLUGIN_ROOT}\"/.claude/hooks/notification.py"
+      }
+    ]
+  },
+  {
+    "event": "SubagentStop",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "\"${CLAUDE_PLUGIN_ROOT}\"/.claude/hooks/subagent-stop.py --chat"
+      }
+    ]
+  },
+  {
+    "event": "PreToolUse",
+    "matcher": "Bash|Read|Write|Edit",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "\"${CLAUDE_PLUGIN_ROOT}\"/.claude/hooks/security-guard.py"
+      }
+    ]
+  },
+  {
+    "event": "PreToolUse",
+    "matcher": "*",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "\"${CLAUDE_PLUGIN_ROOT}\"/.claude/hooks/post-compact-guard.py"
+      }
+    ]
+  },
+  {
+    "event": "PostToolUse",
+    "matcher": "SlashCommand",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "\"${CLAUDE_PLUGIN_ROOT}\"/.claude/hooks/speckit-capture.py"
+      }
+    ]
+  },
+  {
+    "event": "PostToolUse",
+    "matcher": "ExitPlanMode",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "\"${CLAUDE_PLUGIN_ROOT}\"/.claude/hooks/plan-approval-reminder.py"
+      }
+    ]
+  },
+  {
+    "event": "PostToolUse",
+    "matcher": "*",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "\"${CLAUDE_PLUGIN_ROOT}\"/.claude/hooks/tool-logger.py"
+      }
+    ]
+  },
+  {
+    "event": "PreCompact",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "\"${CLAUDE_PLUGIN_ROOT}\"/.claude/hooks/pre-compact-backup.py"
+      }
+    ]
+  },
+  {
+    "event": "Stop",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "\"${CLAUDE_PLUGIN_ROOT}\"/.claude/hooks/pre-stop-update.py"
+      }
+    ]
+  }
+]

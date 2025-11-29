@@ -10,7 +10,6 @@ Make Claude Code **predictable**: preserved context, enforced rules, in‑repo t
 * **Zero behavior change**: no commands, no scripts, no special phrasing. You talk to Claude normally; Meridian handles everything behind the scenes.
 
 > If this setup helps, please ⭐ star the repo and share it.
-> Follow updates: [X (Twitter)](http://x.com/markmdev) • [LinkedIn](http://linkedin.com/in/markmdev)
 
 ---
 
@@ -43,9 +42,29 @@ No workflow changes for the developer — no slash commands, no scripts, no spec
 
 ## Quick start
 
+### Option 1: Install as Claude Code Plugin (Recommended)
+
+Add Meridian to your project's `.claude/settings.json`:
+
+```json
+{
+  "plugins": ["plugin:austinmao/meridian@main"]
+}
+```
+
+Then initialize the `.meridian/` folder in your project:
+
+```
+/init-meridian
+```
+
+This gives you all skills, agents, commands, and hooks without copying files—they load from the Meridian repository.
+
+### Option 2: Manual Installation (Full Control)
+
 ```bash
 # 0) Get this setup
-git clone <THIS_REPO_URL> meridian-setup
+git clone https://github.com/austinmao/meridian.git meridian-setup
 cd meridian-setup
 
 # 1) Copy to your project root
@@ -240,4 +259,3 @@ License: MIT
 If Meridian improves your Claude sessions:
 
 * ⭐ **Star this repo** so others can find it.
-* Share your first `TASK-###` flow with me on [X](http://x.com/markmdev) or [LinkedIn](http://linkedin.com/in/markmdev).

@@ -1,0 +1,23 @@
+{
+  "name": "meridian",
+  "description": "Task management framework for Claude Code with structured briefs, memory system, and approval workflows",
+  "version": "1.0.0",
+  "author": {
+    "name": "Austin Mao",
+    "url": "https://github.com/austinmao"
+  },
+  "homepage": "https://github.com/austinmao/meridian",
+  "repository": "austinmao/meridian",
+  "license": "MIT",
+  "keywords": [
+    "task-management",
+    "memory",
+    "workflow",
+    "hooks",
+    "skills"
+  ],
+  "commands": "commands/",
+  "agents": ".claude/agents/",
+  "skills": ".claude/skills/",
+  "hooks": ".claude-plugin/hooks.json"
+}
