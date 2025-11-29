@@ -11,20 +11,20 @@ GitHub's spec-kit is now integrated with Meridian's task management system, prov
 
 ## What Was Implemented
 
-### 1. Automatic Capture Hook (`speckit-capture.py`)
+### 1. Automatic Task Creation Hook (`speckit-capture.py`)
 
 **Location**: `.claude/hooks/speckit-capture.py`
 **Type**: PostToolUse hook (runs after SlashCommand tool)
-**Purpose**: Automatically captures spec-kit command outputs and bridges them to Meridian
+**Purpose**: Automatically creates Meridian tasks from spec-kit outputs
 
 **Features**:
 - Detects `/speckit.*` commands automatically
-- Captures `/speckit.specify` requirements (extracts structured data)
-- Saves `/speckit.plan` outputs to `docs/artifacts/speckit-plan-TIMESTAMP.md`
-- Captures `/speckit.tasks` breakdowns for Beads/Meridian integration
-- Provides next-step guidance after each command
-- Suggests memory.jsonl entries (doesn't write automatically per CLAUDE.md protocol)
+- `/speckit.specify` → Creates TASK-### folder with YAML, plan, and context files
+- `/speckit.plan` → Updates the active draft task's plan file
+- `/speckit.tasks` → Adds implementation checklist to context file
+- Automatically updates `task-backlog.yaml` with new draft tasks
 - Non-blocking (exit code 0) - never interrupts workflow
+- Uses pyyaml for proper YAML file handling
 
 **Testing**: ✅ Passed manual tests with simulated spec-kit outputs
 
@@ -69,25 +69,32 @@ GitHub's spec-kit is now integrated with Meridian's task management system, prov
 ### Integration Flow
 
 ```
-User runs /speckit.* command
+User runs /speckit.specify [feature]
     ↓
 Claude executes SlashCommand tool
     ↓
 speckit-capture.py hook fires (PostToolUse)
     ↓
-Hook analyzes output, saves artifacts, provides guidance
+Hook AUTOMATICALLY creates:
+  - .meridian/tasks/TASK-###/ folder
+  - TASK-###.yaml with requirements
+  - TASK-###-plan.md (placeholder)
+  - TASK-###-context.md (initial entry)
+  - Updates task-backlog.yaml (status: draft)
     ↓
-User reviews spec-kit output
+User reviews auto-created task
     ↓
-User approves (explicit "yes")
+User runs /speckit.plan
     ↓
-Use task-manager skill to create Meridian TASK-###
+Hook updates TASK-###-plan.md with technical approach
     ↓
-Populate TASK-###.yaml with spec-kit requirements
+User runs /speckit.tasks
     ↓
-Copy approved plan to TASK-###-plan.md
+Hook adds implementation checklist to TASK-###-context.md
     ↓
-Execute using Meridian workflow + Beads for subtasks
+User approves and changes status from "draft" to "todo"
+    ↓
+Execute using Meridian workflow
 ```
 
 ### Workflow Mapping
@@ -119,41 +126,39 @@ Is this a complex feature needing stakeholder approval?
 ### Example 1: Feature Development (Full Workflow)
 
 ```bash
-# Step 1: Generate requirements
+# Step 1: Generate requirements (TASK auto-created!)
 /speckit.specify OAuth2 authentication with Google and GitHub
 
-# Hook output: "Captured 8 requirements from /speckit.specify"
-# Review requirements in context
+# Hook output: "[SPECKIT → MERIDIAN] Created TASK-001 with 8 requirements"
+#   📁 Task folder: .meridian/tasks/TASK-001
+#   📋 Status: draft (pending approval)
 
-# Step 2: Create technical plan
+# Step 2: Create technical plan (auto-updates TASK-001)
 /speckit.plan
 
-# Hook output: "Technical plan saved to docs/artifacts/speckit-plan-20251129-143022.md"
-# Review saved plan
+# Hook output: "[SPECKIT → MERIDIAN] Updated TASK-001 plan"
+#   📄 Plan file: .meridian/tasks/TASK-001/TASK-001-plan.md
 
-# Step 3: Get user approval
-# User: "Approved, let's proceed"
-
-# Step 4: Create Meridian task
-# Use task-manager skill to create TASK-045
-# - Paste spec-kit requirements into TASK-045.yaml
-# - Copy approved plan to TASK-045-plan.md
-
-# Step 5: Break down tasks
+# Step 3: Break down tasks (auto-updates TASK-001)
 /speckit.tasks
 
-# Hook output: "Captured 12 tasks from /speckit.tasks"
+# Hook output: "[SPECKIT → MERIDIAN] Added 12 tasks to TASK-001"
+#   📝 Context file: .meridian/tasks/TASK-001/TASK-001-context.md
 
-# Step 6: Create Beads issues for subtasks
+# Step 4: Review and approve
+# Review TASK-001.yaml, TASK-001-plan.md, TASK-001-context.md
+# Change status from "draft" to "todo" in TASK-001.yaml
+
+# Step 5: Optionally create Beads issues for subtasks
 bd create "Implement OAuth2 provider abstraction"
 bd create "Add Google OAuth2 integration"
 # ... etc
 
-# Step 7: Execute with Meridian workflow
-# Work on tasks, update TASK-045-context.md
+# Step 6: Execute with Meridian workflow
+# Work on tasks, update TASK-001-context.md with progress
 
-# Step 8: Complete following Definition of Done
-# Mark TASK-045 as done in task-backlog.yaml
+# Step 7: Complete following Definition of Done
+# Mark TASK-001 as done in task-backlog.yaml
 ```
 
 ### Example 2: Quick Bug Fix (Lightweight)
