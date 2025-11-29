@@ -1,0 +1,49 @@
+{
+  "skills": [
+    {
+      "name": "task-manager",
+      "description": "Create and manage development tasks with YAML briefs",
+      "triggers": {
+        "file_patterns": [".meridian/tasks/**", ".meridian/task-backlog.yaml"],
+        "prompt_keywords": ["task", "backlog", "create task", "update task", "task status", "new task", "assign task"],
+        "tool_patterns": []
+      }
+    },
+    {
+      "name": "memory-curator",
+      "description": "Document architectural decisions and lessons in memory.jsonl",
+      "triggers": {
+        "file_patterns": [".meridian/memory.jsonl"],
+        "prompt_keywords": ["memory", "architectural decision", "document decision", "lessons learned", "tradeoff", "pattern"],
+        "tool_patterns": []
+      }
+    },
+    {
+      "name": "git-safety",
+      "description": "Enforce Git Safety Protocol and prevent hook bypasses",
+      "triggers": {
+        "file_patterns": [],
+        "prompt_keywords": ["git commit", "pre-commit", "hook", "no-verify", "bypass", "commit failed"],
+        "tool_patterns": []
+      }
+    },
+    {
+      "name": "meridian-workflow",
+      "description": "Guide proper Meridian task lifecycle from plan to completion",
+      "triggers": {
+        "file_patterns": [".meridian/**"],
+        "prompt_keywords": ["workflow", "complete task", "done", "finish", "start work", "definition of done"],
+        "tool_patterns": []
+      }
+    },
+    {
+      "name": "ucpl-parser",
+      "description": "Parse and use Ultra-Compact Prompt Language for token efficiency",
+      "triggers": {
+        "file_patterns": [],
+        "prompt_keywords": ["ucpl", "ultra compact", "compress prompt", "token efficient"],
+        "tool_patterns": []
+      }
+    }
+  ]
+}
