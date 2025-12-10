@@ -2,6 +2,12 @@
 # Simple index of tasks - detailed definitions live in .meridian/tasks/TASK-###/
 
 tasks:
+  - id: TASK-001
+    title: "Implement MCP Code Execution as Meridian Plugin"
+    priority: P1
+    status: todo
+    path: ".meridian/tasks/TASK-001/"
+
   - id: example-000
     title: "Add cursor-based pagination to /api/orders"
     priority: P1

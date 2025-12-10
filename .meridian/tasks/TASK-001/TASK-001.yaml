@@ -1,0 +1,133 @@
+id: TASK-001
+title: "Implement MCP Code Execution as Meridian Plugin"
+status: todo
+priority: P1
+
+objective: >
+  Fork yoloshii/mcp-code-execution-enhanced and adapt it into a Meridian-compatible
+  Claude Code plugin with hybrid architecture (MCP server + skills/hooks integration),
+  removing sandbox complexity while preserving the 99.6% token-efficient CLI scripts pattern.
+
+constraints:
+  - Must use .claude-plugin/ manifest pattern for plugin portability (mem-0010)
+  - No sandbox/container isolation (per user decision)
+  - Must integrate with existing Meridian infrastructure (skill-activator.py, memory.jsonl)
+  - Python 3.11-3.12 required (3.14 incompatible with source repo)
+  - UV package manager for dependency management
+
+requirements:
+  - id: R1
+    description: Fork and strip sandbox code from yoloshii/mcp-code-execution-enhanced
+    acceptance_criteria: |
+      - Forked repo exists at austinmao/mcp-code-execution-meridian
+      - src/runtime/sandbox/ directory removed
+      - Sandbox config removed from mcp_config.json schema
+      - Sandbox options removed from harness.py
+      - All non-sandbox tests pass
+    status: todo
+    notes: Keep the core 99.6% token-efficient CLI scripts pattern
+
+  - id: R2
+    description: Restructure for .claude-plugin/ format
+    acceptance_criteria: |
+      - .claude-plugin/plugin.json manifest exists with proper schema
+      - Skills moved from .claude/skills/ to .claude-plugin/skills/
+      - Hooks created in .claude-plugin/hooks/ (audit, result logging)
+      - Commands created in .claude-plugin/commands/ for init/setup
+    status: todo
+    notes: Follow mem-0010 plugin architecture pattern
+
+  - id: R3
+    description: Implement safety hooks (non-sandbox alternative)
+    acceptance_criteria: |
+      - PreToolUse hook logs code before execution
+      - PostToolUse hook logs results and errors
+      - Timeout enforcement via signal.alarm or threading.Timer
+      - Audit logs written to .claude/logs/code-execution/
+    status: todo
+    notes: UV single-file script pattern per mem-0005
+
+  - id: R4
+    description: Integrate with Meridian infrastructure
+    acceptance_criteria: |
+      - skill-rules.json updated with code-execution triggers
+      - Successful patterns can be saved to memory.jsonl
+      - Execution context includes active TASK-### if present
+    status: todo
+    notes: Leverage existing skill-activator.py infrastructure
+
+  - id: R5
+    description: Register in basecamp marketplace
+    acceptance_criteria: |
+      - Plugin installable via /plugin install mcp-code-execution@basecamp
+      - README documents plugin installation process
+      - marketplace.json updated in basecamp repo
+    status: todo
+    notes: See mem-0011 for marketplace pattern
+
+  - id: R6
+    description: Documentation and testing
+    acceptance_criteria: |
+      - README updated for plugin installation
+      - SKILL.md files created for each skill with YAML frontmatter
+      - Adapted tests pass (sandbox tests removed)
+      - Usage examples provided
+    status: todo
+
+deliverables:
+  - Code: .claude-plugin/ directory structure with plugin.json, skills/, hooks/, commands/
+  - Code: Forked repo at austinmao/mcp-code-execution-meridian
+  - Tests: Adapted test suite (sandbox tests removed)
+  - Docs: README with plugin installation instructions
+  - Docs: SKILL.md files with auto-activation triggers
+
+implementation_notes:
+  - "CRITICAL: Preserve 99.6% token efficiency from CLI scripts pattern"
+  - "CRITICAL: Follow .claude-plugin/ manifest pattern from mem-0010"
+  - "Reference: Source repo at https://github.com/yoloshii/mcp-code-execution-enhanced"
+  - "Reference: Anthropic spec at https://www.anthropic.com/engineering/code-execution-with-mcp"
+  - "Pattern: UV single-file scripts for hooks (mem-0005)"
+  - "Pattern: skill-rules.json for auto-activation (mem-0005)"
+  - Consider working directory restrictions for safety
+  - Resource limits optional via Python resource module
+
+risks:
+  - desc: Source repo may have breaking changes during implementation
+    mitigation: Fork immediately, work from stable snapshot
+  - desc: MCP config integration may conflict with Claude Code's config
+    mitigation: Document clear override mechanism, test with both approaches
+  - desc: Python 3.14 incompatibility in source repo
+    mitigation: Pin to Python 3.11-3.12 in plugin requirements
+
+validation:
+  commands:
+    - uv run pytest (adapted tests)
+    - python -c "import runtime.mcp_client" (import check)
+  manual_steps:
+    - Verify plugin installs via /plugin install command
+    - Test skill auto-activation on code execution triggers
+    - Verify CLI scripts execute with proper logging
+    - Confirm no sandbox code remains
+
+links:
+  files:
+    - .claude-plugin/plugin.json
+    - .claude/hooks/skill-activator.py
+    - .claude/skills/skill-rules.json
+  docs:
+    - https://github.com/yoloshii/mcp-code-execution-enhanced
+    - https://www.anthropic.com/engineering/code-execution-with-mcp
+notes:
+  - User approved fork-and-adapt approach over build-from-scratch
+  - No sandbox required - direct local execution acceptable
+  - Hybrid architecture: MCP server + Claude Code plugin integration
+
+resources:
+  docs:
+    - .meridian/memory.jsonl (mem-0010 plugin pattern, mem-0005 hooks pattern)
+    - .meridian/CODE_GUIDE.md
+  code_paths:
+    - .claude-plugin/plugin.json
+    - .claude/hooks/skill-activator.py
+  context_files:
+    - https://github.com/yoloshii/mcp-code-execution-enhanced
